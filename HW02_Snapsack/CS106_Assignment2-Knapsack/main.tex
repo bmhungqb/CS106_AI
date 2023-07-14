@@ -1,0 +1,312 @@
+\documentclass[13pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage[utf8]{vietnam}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{tkz-tab}
+\usepackage{colortbl}
+\usepackage{multicol}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\setlength{\parindent}{0pt}
+\begin{document}
+\fontsize{18}{30}\selectfont
+{\centering TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN \\
+KHOA KHOA HỌC MÁY TÍNH \\
+\par}
+\vspace{0.5 cm}
+\begin{center}
+    \begin{figure}[htp]
+     \centering\includegraphics[scale=.3]{images/logo_uit.jpg} \\
+    \end{figure}
+    \vspace{1 cm}
+    
+    \par\noindent\rule{\textwidth}{0.5pt}
+    \fontsize{14}{30}\selectfont
+    {\centering \textbf{Assignment 2 \\
+     Solving Knapsack Problems Using Google OR Tools \\
+    }
+    \par\noindent\rule{\textwidth}{0.5pt}
+    
+    \fontsize{14}{30}\selectfont
+    \begin{tabbing}
+    \hspace{2 in} \= \hspace{2 in} \= \kill
+    Môn: \> Trí tuệ nhân tạo \\
+    Lớp: \> CS106.N21.KHCL \\
+    Giảng viên hướng dẫn: \> Lương Ngọc Hoàng \\
+    Sinh viên: \>Bùi Mạnh Hùng - 21522110 \\
+    \end{tabbing} 
+    \date{\today}
+    \begin{center}
+          \vfill
+          \today 
+    \end{center}
+\end{center}
+\newpage
+
+\begin{document}
+\tableofcontents
+\clearpage
+\fontsize{13}{14}\selectfont
+\section{Đặc trưng bài toán Snapsack}
+\begin{itemize}
+    \item Hàm mục tiêu: Max tổng giá trị các đồ vật của túi
+    \item Tổng các đồ vật trong túi phụ thuộc vào 2 yếu tố
+        \begin{itemize}
+            \item Tổng khối lượng các đồ vật có trong túi
+            \item Tổng giá trị các đồ vật trong túi
+        \end{itemize}
+\end{itemize}
+\section{Thiết lập thực nghiệm}
+\begin{itemize}
+    \item Knapsack test instances: https://github.com/likr/kplib
+        \begin{itemize}
+            \item Chọn dữ liệu trên các nhóm (0->12), mỗi nhóm chọn 8 test cases (bao gồm: 50 ,100,200,500,1000,2000,5000 items) chọn file dữ liệu đầu tiên 's00'
+        \end{itemize}
+    \item Time limit: 3 phút
+\end{itemize}
+\section{Kết quả thực nghiệm}
+\textbf{Kết quả chạy thực nghiệm được lưu ở folder: $../assets/Result/$}
+\fontsize{12}{14}\selectfont
+\renewcommand{\arraystretch}{1.5}
+\setlength{\arrayrulewidth}{1pt}
+\arrayrulecolor{blue}
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hline
+        00Uncorrelated  & n00050\_R01000\_s000 & 41990 & 14721 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n00100\_R01000\_s000 & 93074 & 22519 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n00200\_R01000\_s000 & 168634 & 50302 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n00500\_R01000\_s000 & 415984 & 118693 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n01000\_R01000\_s000 & 801622 & 252480 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n02000\_R01000\_s000 & 1617804 & 502731 & 0.0 & True\tabularnewline\hline
+        00Uncorrelated  & n05000\_R01000\_s000 & 4082004 & 1231707 & 0.006978 & True\tabularnewline\hline
+        00Uncorrelated  & n10000\_R01000\_s000 & 8104734 & 2478760 & 0.003997 & True\tabularnewline\hline
+    \end{tabular}
+        \caption{Kết quả thực nghiệm trên group test: 00Uncorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        01WeaklyCorrelated  & n00050\_R01000\_s000 & 31536 & 14232 & 0.0 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n00100\_R01000\_s000 & 62128 & 29013 & 0.0 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n00200\_R01000\_s000 & 113952 & 51563 & 0.0 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n00500\_R01000\_s000 & 278516 & 127276 & 0.001026 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n01000\_R01000\_s000 & 546104 & 245972 & 0.003999 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n02000\_R01000\_s000 & 1105012 & 498452 & 0.002003 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n05000\_R01000\_s000 & 2756450 & 1249257 & 0.002999 & True\tabularnewline\hline
+        01WeaklyCorrelated  & n10000\_R01000\_s000 & 5486334 & 2480964 & 0.370089 & True\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 01WeaklyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        02StronglyCorrelated  & n00050\_R01000\_s000 & 35078 & 14239 & 0.016999 & True\tabularnewline\hline
+        02StronglyCorrelated  & n00100\_R01000\_s000 & 71234 & 29017 & 0.097888 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n00200\_R01000\_s000 & 130726 & 51563 & 180.021158 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n00500\_R01000\_s000 & 324356 & 127278 & 180.032004 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n01000\_R01000\_s000 & 632744 & 245972 & 181.979087 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n02000\_R01000\_s000 & 1277090 & 498045 & 180.031568 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n05000\_R01000\_s000 & 3198668 & 1248734 & 180.006460 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}02StronglyCorrelated  & n10000\_R01000\_s000 & 6365538 & 2480569 & 180.007750 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 02StronglyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        03InverseStronglyCorrelated  & n00050\_R01000\_s000 & 29828 & 16714 & 1.365774 & True\tabularnewline\hline
+        03InverseStronglyCorrelated  & n00100\_R01000\_s000 & 60936 & 33968 & 0.0 & True\tabularnewline\hline
+        03InverseStronglyCorrelated  & n00200\_R01000\_s000 & 109928 & 61464 & 0.0 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}03InverseStronglyCorrelated  & n00500\_R01000\_s000 & 272062 & 152031 & 180.093533 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}03InverseStronglyCorrelated  & n01000\_R01000\_s000 & 527954 & 295477 & 180.052633 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}03InverseStronglyCorrelated  & n02000\_R01000\_s000 & 1068028 & 597114 & 180.029904 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}03InverseStronglyCorrelated  & n05000\_R01000\_s000 & 2676182 & 1496591 & 180.008852 & False\tabularnewline\hline
+        03InverseStronglyCorrelated  & n10000\_R01000\_s000 & 5318516 & 2975558 & 179.993665 & True\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 03InverseStronglyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        04AlmostStronglyCorrelated  & n00050\_R01000\_s000 & 35112 & 14238 & 0.016640 & True\tabularnewline\hline
+        04AlmostStronglyCorrelated  & n00100\_R01000\_s000 & 71222 & 29016 & 0.033714 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}04AlmostStronglyCorrelated  & n00200\_R01000\_s000 & 130770 & 51563 & 180.006372 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}04AlmostStronglyCorrelated  & n00500\_R01000\_s000 & 324308 & 127278 & 180.036311 & False\tabularnewline\hline
+        04AlmostStronglyCorrelated  & n01000\_R01000\_s000 & 632830 & 245972 & 0.201036 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}04AlmostStronglyCorrelated  & n02000\_R01000\_s000 & 1277542 & 498200 & 180.039208 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}04AlmostStronglyCorrelated  & n05000\_R01000\_s000 & 3199570 & 1249065 & 180.020682 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}04AlmostStronglyCorrelated  & n10000\_R01000\_s000 & 6366528 & 2480964 & 180.001252 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 04AlmostStronglyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        05SubsetSum  & n00050\_R01000\_s000 & 28478 & 14239 & 0.0 & True\tabularnewline\hline
+        05SubsetSum  & n00100\_R01000\_s000 & 58034 & 29017 & 0.0 & True\tabularnewline\hline
+        05SubsetSum  & n00200\_R01000\_s000 & 103126 & 51563 & 0.0 & True\tabularnewline\hline
+        05SubsetSum  & n00500\_R01000\_s000 & 254556 & 127278 & 0.0 & True\tabularnewline\hline
+        05SubsetSum  & n01000\_R01000\_s000 & 491944 & 245972 & 0.000954 & True\tabularnewline\hline
+        05SubsetSum  & n02000\_R01000\_s000 & 996904 & 498452 & 0.001000 & True\tabularnewline\hline
+        05SubsetSum  & n05000\_R01000\_s000 & 2498514 & 1249257 & 0.001981 & True\tabularnewline\hline
+        05SubsetSum  & n10000\_R01000\_s000 & 4961928 & 2480964 & 0.002011 & True\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 05SubsetSum}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        06UncorrelatedWithSimilarWeights  & n00050\_R01000\_s000 & 39352 & 2401482 & 0.028542 & True\tabularnewline\hline
+        06UncorrelatedWithSimilarWeights  & n00100\_R01000\_s000 & 79582 & 4902253 & 5.724008 & True\tabularnewline\hline
+        06UncorrelatedWithSimilarWeights  & n00200\_R01000\_s000 & 151356 & 9904900 & 0.0 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}06UncorrelatedWithSimilarWeights  & n00500\_R01000\_s000 & 379538 & 24712055 & 180.047185 & False\tabularnewline\hline
+        06UncorrelatedWithSimilarWeights  & n01000\_R01000\_s000 & 742492 & 49525319 & 0.038749 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}06UncorrelatedWithSimilarWeights  & n02000\_R01000\_s000 & 1496914 & 99050305 & 180.041867 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}06UncorrelatedWithSimilarWeights  & n05000\_R01000\_s000 & 3744112 & 247621933 & 180.061833 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}06UncorrelatedWithSimilarWeights  & n10000\_R01000\_s000 & 7449682 & 495247236 & 180.008307 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 06UncorrelatedWithSimilarWeights}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        07SpannerUncorrelated  & n00050\_R01000\_s000 & 26944 & 4569 & 0.004583 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n00100\_R01000\_s000 & 48456 & 8748 & 184.616372 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n00200\_R01000\_s000 & 95672 & 17274 & 180.014747 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n00500\_R01000\_s000 & 229232 & 42898 & 180.494596 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n01000\_R01000\_s000 & 457248 & 84656 & 180.012683 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n02000\_R01000\_s000 & 919120 & 168004 & 180.013015 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n05000\_R01000\_s000 & 2263368 & 413019 & 180.007814 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}07SpannerUncorrelated  & n10000\_R01000\_s000 & 4566200 & 834925 & 180.001187 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 07SpannerUncorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        08SpannerWeaklyCorrelated  & n00050\_R01000\_s000 & 20708 & 11452 & 1.435745 & True\tabularnewline\hline
+        08SpannerWeaklyCorrelated  & n00100\_R01000\_s000 & 41100 & 20824 & 0.001735 & True\tabularnewline\hline
+        08SpannerWeaklyCorrelated  & n00200\_R01000\_s000 & 81150 & 41116 & 16.501646 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}08SpannerWeaklyCorrelated  & n00500\_R01000\_s000 & 197426 & 100076 & 181.059925 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}08SpannerWeaklyCorrelated  & n01000\_R01000\_s000 & 392100 & 198664 & 180.031444 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}08SpannerWeaklyCorrelated  & n02000\_R01000\_s000 & 783900 & 397176 & 180.027418 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}08SpannerWeaklyCorrelated  & n05000\_R01000\_s000 & 1929000 & 977360 & 180.021426 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}08SpannerWeaklyCorrelated  & n10000\_R01000\_s000 & 3894900 & 1973416 & 180.007283 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 08SpannerWeaklyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n00050\_R01000\_s000 & 56880 & 11540 & 180.036601 & False\tabularnewline\hline
+        09SpannerStronglyCorrelated  & n00100\_R01000\_s000 & 103312 & 20956 & 10.822692 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n00200\_R01000\_s000 & 203776 & 41288 & 180.037771 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n00500\_R01000\_s000 & 490256 & 99928 & 180.043452 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n01000\_R01000\_s000 & 977344 & 198772 & 180.048218 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n02000\_R01000\_s000 & 1958128 & 397264 & 180.039840 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n05000\_R01000\_s000 & 4818704 & 977252 & 180.015265 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}09SpannerStronglyCorrelated  & n10000\_R01000\_s000 & 9726496 & 1973348 & 180.003395 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 09SpannerStronglyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        10MultipleStronglyCorrelated  & n00050\_R01000\_s000 & 42676 & 14238 & 0.0 & True\tabularnewline\hline
+        10MultipleStronglyCorrelated  & n00100\_R01000\_s000 & 86632 & 29016 & 1.330307 & True\tabularnewline\hline
+        10MultipleStronglyCorrelated  & n00200\_R01000\_s000 & 163316 & 51558 & 22.912868 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}10MultipleStronglyCorrelated  & n00500\_R01000\_s000 & 407556 & 127278 & 180.048263 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}10MultipleStronglyCorrelated  & n01000\_R01000\_s000 & 798340 & 245970 & 180.020049 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}10MultipleStronglyCorrelated  & n02000\_R01000\_s000 & 1612300 & 498450 & 180.044476 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}10MultipleStronglyCorrelated  & n05000\_R01000\_s000 & 4039264 & 1249132 & 180.016926 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}10MultipleStronglyCorrelated  & n10000\_R01000\_s000 & 8038728 & 2480964 & 180.056985 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 10MultipleStronglyCorrelated}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        11ProfitCeiling  & n00050\_R01000\_s000 & 28458 & 14238 & 1.252952 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n00100\_R01000\_s000 & 58002 & 29015 & 180.039184 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n00200\_R01000\_s000 & 103080 & 51562 & 180.036518 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n00500\_R01000\_s000 & 254478 & 127277 & 180.041326 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n01000\_R01000\_s000 & 491754 & 245972 & 180.009236 & False\tabularnewline\hline
+        11ProfitCeiling  & n02000\_R01000\_s000 & 996510 & 498450 & 179.872642 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n05000\_R01000\_s000 & 2497596 & 2497596 & 180.034506 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}11ProfitCeiling  & n10000\_R01000\_s000 & 4959912 & 2480964 & 180.003028 & False\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 11ProfitCeiling}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}[c]
+    {|p{5.5cm}|p{4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}\hline
+        \rowcolor[rgb]{0, .60, .800}Group test&Case&Total value&Total weight&Runtime&Optimal\tabularnewline\hlines
+        12Circle  & n00050\_R01000\_s000 & 600062 & 14239 & 0.709216 & True\tabularnewline\hline
+        12Circle  & n00100\_R01000\_s000 & 1222836 & 29017 & 0.210818 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}12Circle  & n00200\_R01000\_s000 & 2172966 & 51563 & 180.225390 & False\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}12Circle  & n00500\_R01000\_s000 & 5363736 & 127278 & 180.567765 & False\tabularnewline\hline
+        12Circle  & n01000\_R01000\_s000 & 10365712 & 245972 & 0.016196 & True\tabularnewline\hline
+        \rowcolor[rgb]{0.82, 0.1, 0.26}12Circle  & n02000\_R01000\_s000 & 21005684 & 498452 & 180.042960 & False\tabularnewline\hline
+        12Circle  & n05000\_R01000\_s000 & 52646014 & 1249257 & 179.991590 & True\tabularnewline\hline
+        12Circle  & n10000\_R01000\_s000 & 104552450 & 2480964 & 179.995906 & True\tabularnewline\hline
+    \end{tabular}
+    \caption{Kết quả thực nghiệm trên group test: 12Circle}
+\end{table}
+
+\section{Đánh giá và kết luận}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=.35]{images/Figure_1.png} \\
+    \caption{Thống kê thời gian thực thi}
+\end{figure}
+\textbf{Qua biểu đồ trên ta thấy:}
+\begin{itemize}
+    \item Group test 0 , 1 , 5 dễ giải nhất (8/8 test case đều Optimal)
+    \item Group test 12 khá dễ (5/8 test case Optimal mặc dù runtime $\approx$ timelimit ở một vài test case)
+    \item Group test 3 , 6 khá khó giải (4/8 test case Optimal)
+    \item Group test 4 , 8 , 10 khá khó giải (3/8 test case Optimal)
+    \item Group test 2 , 11 khó giải (2/8 test case Optimal)
+    \item Group test 7 , 9 khó giải nhất (1/8 test case Optimal)
+\end{itemize}
+\end{document}

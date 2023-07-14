@@ -1,0 +1,3 @@
+Runtime: 0.708646
+N.o steps: 21
+Result: ['L', 'U', 'U', 'U', 'l', 'u', 'R', 'd', 'd', 'd', 'd', 'L', 'd', 'l', 'U', 'U', 'U', 'U', 'l', 'u', 'R']

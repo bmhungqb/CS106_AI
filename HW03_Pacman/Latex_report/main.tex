@@ -1,0 +1,288 @@
+\documentclass[13pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage[utf8]{vietnam}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{tkz-tab}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\setlength{\parindent}{0pt}
+\begin{document}
+\fontsize{18}{30}\selectfont
+{\centering TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN \\
+KHOA KHOA HỌC MÁY TÍNH \\
+\par}
+\vspace{0.5 cm}
+\begin{center}
+    \begin{figure}[htp]
+     \centering\includegraphics[scale=.3]{images/logo_uit.jpg} \\
+    \end{figure}
+    \vspace{1 cm}
+    
+    \par\noindent\rule{\textwidth}{0.5pt}
+    \fontsize{14}{30}\selectfont
+    {\centering \textbf{Assignment 3 \\
+     Evaluation functions for Minimax/AlphaBeta/Expectimax \\
+    }
+    \par\noindent\rule{\textwidth}{0.5pt}
+    
+    \fontsize{14}{30}\selectfont
+    \begin{tabbing}
+    \hspace{2 in} \= \hspace{2 in} \= \kill
+    Môn: \> Trí tuệ nhân tạo \\
+    Lớp: \> CS106.N21.KHCL \\
+    Giảng viên hướng dẫn: \> Lương Ngọc Hoàng \\
+    Sinh viên: \>Bùi Mạnh Hùng - 21522110 \\
+    \end{tabbing} 
+    \date{\today}
+    \begin{center}
+          \vfill
+          \today 
+    \end{center}
+\end{center}
+\newpage
+
+\begin{document}
+\tableofcontents
+\clearpage
+\fontsize{13}{14}\selectfont
+\section{Ý tưởng hàm evaluation function }
+\textbf{Giá trị trả về của hàm lượng giá:}
+\begin{lstlisting}
+    score_weight * score + \
+    food_weight * minFoodDistance + \
+    ghost_weight * min_ghost_distance + \
+    remaining_food_weight * remainingFood + \
+    proximity_weight * proximity_to_ghosts + \
+    capsule_weight * totalCapsule
+\end{lstlisting}
+\textbf{Hàm lượng giá dựa vào các yếu tố:}
+\begin{itemize}
+    \item \textbf{score}: Số điểm đạt được
+    \item \textbf{minFoodDistance}: Khoảng cách từ Pacman đến chấm thức ăn nhỏ nhất
+    \item \textbf{min\_ghost\_distance}: Tổng khoảng cách từ Pacman đến các Ghosts
+    \item \textbf{remainingFood}: Số chấm thức ăn còn lại
+    \item \textbf{proximity\_to\_ghosts}: Số lượng Ghosts Pacman chạm vào
+    \item \textbf{totalCapsule}: Tổng số viên Capsule còn lại
+\end{itemize}
+\textbf{Tương ứng với các trọng số khởi tạo:}
+\begin{itemize}
+    \item score\_weight = 10 
+    \item food\_weight = -10
+    \item ghost\_weight = 5
+    \item remaining\_food\_weight = -20
+    \item capsule\_weight = -200
+    \item proximity\_weight = -300
+\end{itemize}
+\subsection*{1.1 Ý nghĩa từng yếu tố được lựa chọn}
+\subsubsection*{1.1.1 Score}
+\textbf{Mục đích:} Khuyến khích Pacman ăn các chấm thức ăn giá trị điểm sẽ tăng 20 lần. Đặc biệt, khi ăn các Ghost\_Scare(Ghost đang ở trạng thái sợ hãi) thì điểm số sẽ tăng nhiều hơn nữa.
+\subsubsection*{1.1.2 minFoodDistance}
+\begin{lstlisting}
+    minFoodDistance = 0
+    for food in newFood.asList():
+        dis_Pacman_Food = manhattanDistance(newPos, food)
+        if dis_Pacman_Food < minFoodDistance or minFoodDistance = = 0:
+            minFoodDistance = dis_Pacman_Food
+\end{lstlisting}
+\textbf{Mục đích:}Khuyến khích Pacman tiếp cận các chấm thức ăn. Khi càng xa chấm thức ăn giá trị giảm càng lớn(-20 lần)
+\subsubsection*{1.1.3 min\_ghost\_distance \& proximity\_to\_ghosts \& isGreater4}
+\begin{lstlisting}
+    proximity_to_ghosts = 0
+    min_ghost_distance = 0
+    isGreater4 = 1
+    for ghost in newGhostPositions:
+        distance = manhattanDistance(newPos, ghost)
+        if distance <= 4:
+            isGreater4 = 0
+        if min_ghost_distance = = 0 or min_ghost_distance > distance:
+            min_ghost_distance = distance
+        if distance = = 0:
+            proximity_to_ghosts += 1
+\end{lstlisting}
+\begin{item}
+    \item \textbf{min\_ghost\_distance}: Ghost có khoảng cách gần nhất càng gần Pacman thì Pacman càng cần phải tránh xa nó
+    \item \textbf{proximity\_to\_ghosts}: Nếu trạng thái đó chạm vào Ghost thì Pacman tránh action đó.
+    \item \textbf{isGreater4}: Nếu như Pacman đều cách Ghost > 4 đơn vị (manhattan) thì giá trị trả về càng lớn khi Pacman ăn các chấm thức ăn. Ngược lại thì Pacman cần phải tránh xa Ghosts hơn.
+    \begin{lstlisting}
+        if isGreater4:
+            remaining_food_weight = -40
+        else:
+            ghost_weight = 10
+    \end{lstlisting}
+\end{item}
+\subsubsection*{1.1.4 totalCapsule}
+\textbf{Mục đích:} Khuyến khích Pacman ăn Capsule để Ghost biến thành trạng thái scare. Nhưng nếu như số lượng ghosts scare > 0 thì không nên ăn tiếp Capsule để có thể ăn nhiều ghost scare nhất có thể.
+\begin{lstlisting}
+    if len(ghostScare) > 0:
+        capsule_weight = 150
+\end{lstlisting}
+\section{Kết quả thực nghiệm}
+\textbf{Tiến hành thực nghiệm với các tham số:} \\
+    \text{python pacman.py -l<layout> -p<algo\_func> -depth=3,evalFn=<eval\_func> --frameTime 0} \\
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{\begin{tabular}
+{|c|ccc|ccc|ccc|c|}
+\hline
+\rowcolor[HTML]{3531FF} 
+\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{3}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Minimax}}} &
+  \multicolumn{3}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{AlphaBeta}}} &
+  \multicolumn{3}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Expectimax}}} &
+  \cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} } \\ \cline{2-10}
+\rowcolor[HTML]{3531FF} 
+\multirow{-2}{*}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Map}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average score}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average runtime}}} &
+  {\color[HTML]{FFFFFF} \textbf{Win rate}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average score}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average runtime}}} &
+  {\color[HTML]{FFFFFF} \textbf{Win rate}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average score}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Average runtime}}} &
+  {\color[HTML]{FFFFFF} \textbf{Win rate}} &
+  \multirow{-2}{*}{\cellcolor[HTML]{3531FF}{\color[HTML]{FFFFFF} \textbf{Evaluation function}}} \\ \hline
+\rowcolor[HTML]{CBCEFB} 
+\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1926.0} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}51.05} &
+  3/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1905.0} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}42.494} &
+  2/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}3066.6} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}43.576} &
+  5/5 &
+  {\color[HTML]{330001} \textbf{betterEvaluation}} \\ \cline{2-11} 
+\rowcolor[HTML]{34CDF9} 
+\multirow{-2}{*}{\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} \textbf{contestClassic}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}-81.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}65.134} &
+  0/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}-176.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}17.976} &
+  0/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}135.8} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}82.438} &
+  0/5 &
+  {\color[HTML]{330001} \textbf{scoreEvaluation}} \\ \hline
+\rowcolor[HTML]{CBCEFB} 
+\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1595.0} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}23.088} &
+  5/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1567.6} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}16.89} &
+  4/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1679} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}24.058} &
+  5/5 &
+  {\color[HTML]{330001} \textbf{betterEvaluation}} \\ \cline{2-11} 
+\rowcolor[HTML]{34CDF9} 
+\multirow{-2}{*}{\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} \textbf{mediumClassic}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}407.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}96.28} &
+  2/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}491.6} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}26.352} &
+  1/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}-192.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}181.71} &
+  2/5 &
+  {\color[HTML]{330001} \textbf{scoreEvaluation}} \\ \hline
+\rowcolor[HTML]{CBCEFB} 
+\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1890.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}638.608} &
+  3/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1968.4} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}272.074} &
+  3/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1651.8} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}576.4} &
+  2/5 &
+  {\color[HTML]{330001} \textbf{betterEvaluation}} \\ \cline{2-11} 
+\multirow{-2}{*}{\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} \textbf{originalClassic}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \cellcolor[HTML]{FE0000}NULL &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \cellcolor[HTML]{FE0000}NULL &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}395.4} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}343.65} &
+  \cellcolor[HTML]{34CDF9}0/5 &
+  \cellcolor[HTML]{34CDF9}{\color[HTML]{330001} \textbf{scoreEvaluation}} \\ \hline
+\rowcolor[HTML]{CBCEFB} 
+\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1266.8} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}60.978} &
+  5/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1209.0} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}34.602} &
+  5/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1338} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}54.754} &
+  5/5 &
+  {\color[HTML]{330001} \textbf{betterEvaluation}} \\ \cline{2-11} 
+\rowcolor[HTML]{FE0000} 
+\multirow{-2}{*}{\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} \textbf{openClassic}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  NULL &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  NULL &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \cellcolor[HTML]{FE0000}NULL &
+  \cellcolor[HTML]{34CDF9}{\color[HTML]{330001} \textbf{scoreEvaluation}} \\ \hline
+\rowcolor[HTML]{CBCEFB} 
+\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} } &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}1984.6} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}272.52} &
+  4/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}2978.4} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}102.336} &
+  5/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}2132.2} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{CBCEFB}300.402} &
+  4/5 &
+  {\color[HTML]{330001} \textbf{betterEvaluation}} \\ \cline{2-11} 
+\multirow{-2}{*}{\cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} \textbf{powerClassic}}} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \cellcolor[HTML]{FE0000}NULL &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}1241.4} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{34CDF9}500.704} &
+  \cellcolor[HTML]{34CDF9}1/5 &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \multicolumn{1}{c|}{\cellcolor[HTML]{FE0000}NULL} &
+  \cellcolor[HTML]{FE0000}NULL &
+  \cellcolor[HTML]{34CDF9}{\color[HTML]{330001} \textbf{scoreEvaluation}} \\ \hline
+
+\end{tabular}}
+\caption{Bảng thống kê kết quả thực nghiệm}
+\end{table}
+\textbf{Chú thích:}
+\begin{item}
+\item NULL: game chạy > 5p chưa hoàn thành
+\end{item}
+\section{Kết luận}
+\subsection{Độ hiệu quả của hai hàm đánh giá}
+Hàm \textbf{betterEvualtion} đạt độ hiệu quả vượt trội hơn hẳn. Tỷ lệ thắng cao hơn.
+\subsection{Độ hiệu quả của 3 thuật toán}
+\textbf{Minimax \& AlphaBeta} có tỉ lệ thắng, điểm số khá tương đương nhau. Tuy nhiên thời gian thực thi AlphaBeta nhanh hơn. \\
+\textbf{Expectimax} đạt được điểm số, thời gian thực thi vượt trội hơn hẳn 2 thuật toán kia.
+\subsection{Trường hợp tốt nhất}
+Sử dụng map contestClassic + ExpectimaxAgent + depth = 3 \\
+=> đạt được điểm số: \textbf{3600}\\
+\end{document}
